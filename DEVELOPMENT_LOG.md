@@ -1,13 +1,11 @@
 # Development log
 
-## Provider settings and safety milestone
+## Developer workspace and safety milestone
 
-- Added Systems & Settings dialog with editable provider model IDs, secure keyring credential writes, and non-blocking provider connection checks.
-- Added JSON persistence for model preferences only; credentials are explicitly excluded.
-- Added task-scoped approval requests with expiry, explicit approve/deny, and one-time consumption.
-- Added guarded task transitions, dependency checks, and thread-safe registry access.
-- Updated UI to retain a worker pool, surface task errors, and distinguish cancellation state.
-- Added tests for approval semantics and provider preference persistence.
+- Added a guarded `WorkspaceManager` so Developer Mode can create project roots and access files without path traversal outside the project sandbox.
+- Added project-aware file read/write/delete helpers and file enumeration for project roots.
+- Added tests for workspace creation and path traversal rejection.
+- Continued security and approval guarding around sensitive actions and provider settings.
 
 ## Verification
 

@@ -1,6 +1,6 @@
 # GENESIS PROMETHEUS
 
-Windows-first desktop assistant with a deterministic Native Brain and optional Local (Ollama), Gemini, and Groq providers.
+Windows-first desktop intelligence application with a deterministic Native Brain and optional Local (Ollama), Gemini, and Groq providers.
 
 ## Run
 
@@ -16,9 +16,13 @@ python main.py
 
 ## Provider configuration
 
-The **Systems & Settings** dialog lets you change model names, save cloud credentials to the OS credential store, and run bounded connection checks off the UI thread. Credentials are loaded from Windows Credential Manager/macOS Keychain/Linux Secret Service through `keyring` when available, then from `GEMINI_API_KEY` / `GROQ_API_KEY`. Provider model preferences are stored in `data/provider_preferences.json`; secrets are never written there.
+The Systems & Settings dialog lets you change model names, save cloud credentials to the OS credential store, and run bounded connection checks off the UI thread. Credentials are loaded from the OS credential store through `keyring` when available, then from `GEMINI_API_KEY` / `GROQ_API_KEY`. Provider model preferences are stored in `data/provider_preferences.json`; secrets are never written there.
 
 Ollama: install Ollama and pull a model (for example `ollama pull llama3.1`). Optional environment variables: `PROMETHEUS_OLLAMA_URL`, `PROMETHEUS_OLLAMA_MODEL`.
+
+## Developer workspace
+
+The project now includes a safe workspace registry for Developer Mode. It allows projects to be created and file reads/writes to remain within the selected project root while rejecting path traversal attempts. This is a project-local guardrail for source code operations, not a full autonomous code editing system.
 
 ## Security and approvals
 
@@ -32,6 +36,7 @@ Permissions default to deny for desktop control, terminal execution, and file de
 - Thread-safe task registry and explicit state transitions/dependency gating
 - Approval request lifecycle primitives
 - SQLite persistent memory
+- Developer workspace isolation for project-aware file operations
 - Main command console and shared floating companion state
 
 ## Limitations
