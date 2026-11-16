@@ -1,12 +1,11 @@
 # Development log
 
-## Developer workspace and research milestone
+## Security and audit milestone
 
-- Added a guarded `WorkspaceManager` so Developer Mode can create project roots and access files without path traversal outside the project sandbox.
-- Added project-aware file read/write/delete helpers and file enumeration for project roots.
-- Added a `ResearchMode` report structure to capture source references, findings, and summary text while separating fact and interpretation.
-- Added tests for workspace creation, path traversal rejection, and research report generation.
-- Continued security and approval guarding around sensitive actions and provider settings.
+- Added an append-only SQLite audit log for task events, security approvals, and automation actions.
+- Kept audit records fully local and separate from provider secrets.
+- Continued Developer Mode sandboxing, research reporting, and approval lifecycle guardrails.
+- Added a focused test for audit log persistence and retrieval.
 
 ## Verification
 

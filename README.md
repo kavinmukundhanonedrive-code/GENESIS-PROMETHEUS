@@ -22,15 +22,15 @@ Ollama: install Ollama and pull a model (for example `ollama pull llama3.1`). Op
 
 ## Developer workspace
 
-The project now includes a safe workspace registry for Developer Mode. It allows projects to be created and file reads/writes to remain within the selected project root while rejecting path traversal attempts. This is a project-local guardrail for source code operations, not a full autonomous code editing system.
+The project includes a safe workspace registry for Developer Mode. It allows projects to be created and file reads/writes to remain within the selected project root while rejecting path traversal attempts. This is a project-local guardrail for source code operations, not a full autonomous code editing system.
 
 ## Research mode
 
-The repository now includes a structured research-mode layer that keeps verified sources separate from interpretation. Research reports store citations, findings, and a final summary in a traceable format suitable for later review.
+The repository includes a structured research-mode layer that keeps verified sources separate from interpretation. Research reports store citations, findings, and a final summary in a traceable format suitable for later review.
 
-## Security and approvals
+## Security and auditing
 
-Permissions default to deny for desktop control, terminal execution, and file deletion. `security.approvals.ApprovalManager` creates expiring, task-scoped, one-use approvals and cannot itself execute actions. Actual automation callers must verify permissions and consume the matching approval before execution. No arbitrary shell execution or destructive file operation is exposed by this milestone.
+The application includes an append-only audit log for task states, approvals, and automation events to preserve a verifiable action history. Sensitive operations remain default-deny, and approvals are still task-scoped and expiring.
 
 ## Current milestone
 
@@ -42,6 +42,7 @@ Permissions default to deny for desktop control, terminal execution, and file de
 - SQLite persistent memory
 - Developer workspace isolation for project-aware file operations
 - Structured research reporting with citations and fact/interpretation separation
+- Append-only security audit logging
 - Main command console and shared floating companion state
 
 ## Limitations
