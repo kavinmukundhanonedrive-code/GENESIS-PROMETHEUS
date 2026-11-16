@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List
 
 
 class BrainType(str, Enum):
@@ -12,41 +12,40 @@ class BrainType(str, Enum):
 
 
 class IntelligenceRouter:
-    """Select the most appropriate brain(s) for the requested workload."""
+    """Rule-based routing; provider outputs never control permissions or routing."""
 
-    def __init__(self) -> None:
-        self._routing_table = {
-            "simple": [BrainType.NATIVE],
-            "offline": [BrainType.NATIVE, BrainType.LOCAL],
-            "document_analysis": [BrainType.NATIVE, BrainType.LOCAL],
-            "architecture": [BrainType.NATIVE, BrainType.GEMINI],
-            "rapid_classification": [BrainType.NATIVE, BrainType.GROQ],
-            "development": [BrainType.NATIVE, BrainType.GEMINI, BrainType.LOCAL, BrainType.GROQ],
-            "research": [BrainType.NATIVE, BrainType.GEMINI, BrainType.GROQ],
-        }
+    ROUTES: Dict[str, List[str]] = {
+        "simple": ["native"],
+        "offline": ["local"],
+        "document_analysis": ["local", "gemini"],
+        "architecture": ["gemini", "local", "groq"],
+        "rapid_classification": ["groq", "local", "gemini"],
+        "development": ["local", "gemini", "groq"],
+        "research": ["gemini", "groq", "local"],
+    }
 
     def route(self, task_type: str, *, offline_mode: bool = False, prefer_local: bool = False) -> List[str]:
-        normalized = task_type.lower().replace("-", "_")
-
-        if offline_mode and normalized in {"architecture", "research", "development"}:
-            normalized = "offline"
-
-        if prefer_local and normalized == "simple":
-            return [BrainType.NATIVE.value, BrainType.LOCAL.value]
-
-        route = self._routing_table.get(normalized, [BrainType.NATIVE.value])
-        return [brain.value if isinstance(brain, BrainType) else str(brain) for brain in route]
+        kind = task_type.lower().replace("-", "_")
+        if offline_mode:
+            return ["local"]
+        candidates = list(self.ROUTES.get(kind, ["local", "groq", "gemini"]))
+        if prefer_local and "local" in candidates:
+            candidates.remove("local")
+            candidates.insert(0, "local")
+        return candidates
 
     def route_for_prompt(self, prompt: str, *, offline_mode: bool = False) -> List[str]:
-        prompt_lower = prompt.lower()
-        if "code" in prompt_lower or "debug" in prompt_lower or "fix" in prompt_lower:
-            return self.route("development", offline_mode=offline_mode)
-        if "research" in prompt_lower or "compare" in prompt_lower or "fact" in prompt_lower:
-            return self.route("research", offline_mode=offline_mode)
-        if "summarize" in prompt_lower or "classify" in prompt_lower:
-            return self.route("rapid_classification", offline_mode=offline_mode)
-        if "document" in prompt_lower or "read" in prompt_lower or "pdf" in prompt_lower:
-            return self.route("document_analysis", offline_mode=offline_mode)
-        if "architecture" in prompt_lower or "system" in prompt_lower:
-            return self.route("architecture", offline_mode=offline_mode)
-        return self.route("simple", offline_mode=offline_mode)
+        text = prompt.lower()
+        if offline_mode:
+            return ["local"]
+        if any(word in text for word in ("code", "debug", "program", "develop", "fix this")):
+            return self.route("development")
+        if any(word in text for word in ("research", "compare", "sources", "fact check")):
+            return self.route("research")
+        if any(word in text for word in ("classify", "quick", "briefly")):
+            return self.route("rapid_classification")
+        if any(word in text for word in ("document", "pdf", "summarize this file")):
+            return self.route("document_analysis")
+        if any(word in text for word in ("architecture", "design a system")):
+            return self.route("architecture")
+        return self.route("simple")

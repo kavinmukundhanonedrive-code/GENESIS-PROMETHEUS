@@ -1,13 +1,4 @@
 APP_CSS = """
-QMainWindow {
-    background: #06070a;
-    color: #f5f5f5;
-    border: 1px solid #a50b18;
-}
-
-#titleLabel, #statusLabel {
-    color: #ff3b43;
-    font-size: 18px;
-    font-weight: 600;
-}
+QMainWindow { background: #08090c; color: #f5f5f5; }
+QPushButton { background: #a80f20; color: white; border-radius: 5px; padding: 9px; }
 """

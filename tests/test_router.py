@@ -4,19 +4,17 @@ from core.intelligence_router import IntelligenceRouter
 
 
 def test_simple_routing() -> None:
-    router = IntelligenceRouter()
-    assert router.route("simple") == ["native"]
+    assert IntelligenceRouter().route("simple") == ["native"]
 
 
 def test_development_routing() -> None:
-    router = IntelligenceRouter()
-    result = router.route("development")
-    assert "native" in result
-    assert "gemini" in result
+    result = IntelligenceRouter().route("development")
+    assert result[0] == "local" and "gemini" in result
 
 
 def test_prompt_routing() -> None:
-    router = IntelligenceRouter()
-    result = router.route_for_prompt("Please debug this code issue.")
-    assert "native" in result
-    assert "gemini" in result
+    assert "gemini" in IntelligenceRouter().route_for_prompt("Please debug this code issue.")
+
+
+def test_offline_never_routes_to_cloud() -> None:
+    assert IntelligenceRouter().route("research", offline_mode=True) == ["local"]

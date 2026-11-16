@@ -1,29 +1,23 @@
 from __future__ import annotations
 
-try:
-    from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
-except ImportError:  # pragma: no cover
-    QApplication = None
-    QMainWindow = object
-    QLabel = object
-    QVBoxLayout = object
-    QWidget = object
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QLabel, QLineEdit, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 
-class FloatingWidget(QMainWindow if QApplication is not None else object):
-    """Compact companion window used when the application is minimized."""
+class FloatingWidget(QMainWindow):
+    """Lightweight companion view sharing the same application state."""
+    def __init__(self, shared_state, restore_main) -> None:
+        super().__init__(); self.state, self.restore_main = shared_state, restore_main
+        self.setWindowTitle("Prometheus Companion"); self.setFixedSize(350, 150)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint | Qt.Tool)
+        content = QWidget(); layout = QVBoxLayout(content); self.status = QLabel("◈ PROMETHEUS · READY")
+        self.task = QLabel("No active task"); self.command = QLineEdit(); self.command.setPlaceholderText("Command input is available in the main window")
+        expand = QPushButton("EXPAND COMMAND CENTER"); expand.clicked.connect(self._restore)
+        layout.addWidget(self.status); layout.addWidget(self.task); layout.addWidget(expand); self.setCentralWidget(content)
 
-    def __init__(self) -> None:
-        if QApplication is None:
-            raise RuntimeError("PySide6 is required to run the floating widget.")
-        super().__init__()
-        self.setWindowTitle("Prometheus")
-        self.resize(360, 140)
-        self.setWindowFlags(self.windowFlags() | 0x00800000)
+    def _restore(self) -> None:
+        self.hide(); self.restore_main()
 
-        central = QWidget(self)
-        layout = QVBoxLayout(central)
-        status = QLabel("Native Brain online")
-        status.setObjectName("statusLabel")
-        layout.addWidget(status)
-        self.setCentralWidget(central)
+    def showEvent(self, event) -> None:
+        self.task.setText(self.state.current_task or "No active task")
+        super().showEvent(event)

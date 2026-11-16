@@ -1,41 +1,24 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
-from typing import Dict, Optional
 
 
 @dataclass
 class SystemStats:
-    cpu_percent: float
-    ram_percent: float
-    storage_percent: float
+    cpu_percent: float | None
+    ram_percent: float | None
+    storage_percent: float | None
     active_applications: list[str]
 
 
 class SystemMonitor:
-    def __init__(self) -> None:
-        self._cache: Optional[SystemStats] = None
-
     def snapshot(self) -> SystemStats:
         try:
             import psutil
-        except ImportError:  # pragma: no cover
-            return SystemStats(
-                cpu_percent=0.0,
-                ram_percent=0.0,
-                storage_percent=0.0,
-                active_applications=[],
-            )
-
-        cpu_percent = psutil.cpu_percent(interval=None)
-        ram = psutil.virtual_memory()
-        storage = psutil.disk_usage('/')
-        apps = [p.name() for p in psutil.process_iter(attrs=['name'])][:10]
-
-        return SystemStats(
-            cpu_percent=float(cpu_percent),
-            ram_percent=float(ram.percent),
-            storage_percent=float((storage.used / storage.total) * 100),
-            active_applications=apps,
-        )
+        except ImportError:
+            return SystemStats(None, None, None, [])
+        cpu = psutil.cpu_percent(interval=0.1)
+        ram = psutil.virtual_memory().percent
+        storage = psutil.disk_usage("C:\\" if __import__("os").name == "nt" else "/").percent
+        apps = sorted({p.info.get("name", "") for p in psutil.process_iter(attrs=["name"]) if p.info.get("name")})[:20]
+        return SystemStats(float(cpu), float(ram), float(storage), apps)

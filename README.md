@@ -1,110 +1,69 @@
 # GENESIS PROMETHEUS
 
-GENESIS PROMETHEUS is a desktop intelligence platform built around a four-brain orchestration model:
+A Windows-first desktop intelligence application with a deterministic Native Brain and optional Local (Ollama), Gemini, and Groq providers.
 
-- Native Brain: deterministic coordination layer
-- Local Brain: local reasoning and private processing via Ollama
-- Gemini Brain: Google Gemini provider integration
-- Groq Brain: Groq inference service integration
+## Run
 
-This repository now contains a strong Phase 1-6 foundation: architecture, orchestration, provider adapters, memory persistence, UI shell, automation scaffolding, security, systems monitoring, voice service, and tests.
+Python 3.10+ is recommended. From the repository root:
 
-## Architecture overview
-
-The project is designed around a modular backend architecture where the Native Brain remains the single control authority. All external intelligence services are abstracted behind provider adapters and treated as assistant providers rather than autonomous system controllers.
-
-## Design principles
-
-1. Native Brain remains the orchestration authority.
-2. Provider adapters are isolated behind a common interface.
-3. Task management is centralized and observable.
-4. Memory is persistent and independent from providers.
-5. UI and automation share a common backend state.
-6. The floating widget is a shared-state companion mode, not a second AI.
-7. Local operation remains possible without cloud access.
-
-## Project structure
-
-```text
-GENESIS_PROMETHEUS/
-├── main.py
-├── requirements.txt
-├── README.md
-├── DEVELOPMENT_LOG.md
-├── .gitignore
-├── config/
-│   ├── __init__.py
-│   └── settings.py
-├── core/
-│   ├── __init__.py
-│   ├── native_brain.py
-│   ├── intelligence_router.py
-│   ├── state.py
-│   └── task_manager.py
-├── providers/
-│   ├── __init__.py
-│   ├── base_provider.py
-│   ├── local_provider.py
-│   ├── gemini_provider.py
-│   └── groq_provider.py
-├── memory/
-│   ├── __init__.py
-│   ├── database.py
-│   └── repository.py
-├── ui/
-│   ├── __init__.py
-│   ├── styles.py
-│   ├── main_window.py
-│   └── floating_widget.py
-├── automation/
-│   ├── __init__.py
-│   └── desktop_controller.py
-├── security/
-│   ├── __init__.py
-│   ├── credentials.py
-│   └── permissions.py
-├── monitoring/
-│   ├── __init__.py
-│   └── system.py
-├── voice/
-│   ├── __init__.py
-│   └── voice_service.py
-├── tests/
-│   ├── test_task_manager.py
-│   ├── test_router.py
-│   └── test_memory.py
-├── data/
-└── generated/
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python main.py
 ```
 
-## Included functionality
+On Linux/macOS, activate the virtual environment with its platform-specific command and run `python main.py`.
 
-- Central task manager with lifecycle states
-- Native Brain orchestration shell
-- Four-brain routing strategy
-- Local, Gemini, and Groq provider adapters
-- SQLite-backed memory store
-- Shared application state model
-- PySide6 shell scaffolding for main and floating UI
-- Desktop automation interfaces
-- Security and credential helpers
-- System monitoring interfaces
-- Voice service stubs
-- Automated tests covering core logic
+## Configure providers
 
-## Development status
+- **Ollama:** install/start Ollama, pull a model (`ollama pull llama3.1`), set `PROMETHEUS_OLLAMA_URL` and `PROMETHEUS_OLLAMA_MODEL` if needed.
+- **Gemini:** set `GEMINI_API_KEY`; optional `PROMETHEUS_GEMINI_MODEL`.
+- **Groq:** set `GROQ_API_KEY`; optional `PROMETHEUS_GROQ_MODEL`.
 
-This project is now at a robust engineering foundation stage. The architecture is in place and the major subsystems are defined. The remaining work is incremental productization: wiring actual services, hardening security, tuning UI behavior, and completing automation validation.
+For the current shell, for example:
 
-## Next steps
+```powershell
+$env:GEMINI_API_KEY = "your-key"
+$env:GROQ_API_KEY = "your-key"
+```
 
-1. Connect real provider APIs with secure configuration
-2. Build the operational UI with real task state binding
-3. Add persistence and retrieval workflows for project memory
-4. Implement approval workflows and destructive-action safeguards
-5. Add actual desktop automation and validation controllers
-6. Expand diagnostics and recovery behavior
+Keys are not stored in source code or written to `.env`. The credential manager can use the OS credential store through `keyring`.
 
-## Important note
+## What works in this milestone
 
-The system is intentionally designed to operate without cloud access and to remain maintainable. It keeps orchestration logic independent from provider-specific implementations to preserve deterministic control.
+- PySide6 command center; provider calls run off the UI thread.
+- Rule-based request routing and sequential provider fallback.
+- Real Ollama `/api/tags` and `/api/generate` calls.
+- Real Gemini `generateContent` and Groq chat-completion requests.
+- Explicit no-provider/offline messages (the application does not fabricate generated answers).
+- SQLite persistent memory repository.
+- Shared state used by the floating companion and main window.
+- Conservative desktop helpers; launching requires a full executable path and uses `shell=False`.
+- Test coverage for routing, task transitions, and memory persistence.
+
+## Safety and current limitations
+
+This is an early desktop application, not an autonomous unrestricted operator. Arbitrary shell/script execution, destructive file operations, mouse/keyboard control, wake-word listening, speech recognition/synthesis, web research/citations, and developer workspace editing are not enabled. These need explicit approval design, platform-specific implementations, and end-to-end testing before being advertised as complete. Provider selection and responses do not grant permissions. Desktop actions should be initiated only through a future explicit approval flow.
+
+The floating companion currently restores the shared main session; it is not yet a full mini command console. Provider status is shown as configured/connected based on the last completed request, not continuously polled. There is no hardware in this repository environment to validate Windows desktop behavior.
+
+## Tests
+
+```powershell
+python -m pytest -q
+```
+
+Tests are offline and do not require provider credentials. This repository change was not executed in a Python environment, so test results must be verified locally/CI.
+
+## Architecture
+
+- `core/native_brain.py`: orchestrates tasks; external models cannot take control.
+- `core/intelligence_router.py`: deterministic workload routing.
+- `providers/`: provider-specific HTTP adapters.
+- `memory/`: SQLite persistence.
+- `ui/`: PySide6 main and floating presentation.
+- `security/`: permission and credential foundations.
+- `automation/`: deliberately constrained desktop helpers.
+
+See `DEVELOPMENT_LOG.md` for completed work and remaining roadmap.

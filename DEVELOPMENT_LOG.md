@@ -1,50 +1,27 @@
 # DEVELOPMENT LOG
 
-## 2026-11-16
+## Current milestone
 
-### Completed
+### Implemented
+- Replaced placeholder model responses with HTTP integrations for Ollama, Gemini, and Groq.
+- Added deterministic routing and sequential fallback; requests run on a worker thread in the PySide6 UI.
+- Built the main command console with offline mode and cancellation surface.
+- Added shared-state floating companion restore behavior.
+- Hardened SQLite memory with project-scoped keys, parameterized search, and deletion.
+- Added default-deny permission defaults and OS credential-store/environment secret retrieval.
+- Replaced fake desktop actions with explicit executable-path launch and optional screenshot/window enumeration.
+- Added focused offline tests and setup documentation.
 
-- Established the repository foundation.
-- Created the four-brain architecture model.
-- Implemented a central task manager.
-- Added Native Brain orchestration.
-- Implemented an intelligence router.
-- Added provider adapters for Local, Gemini, and Groq.
-- Added SQLite-backed memory persistence.
-- Added shared application state infrastructure.
-- Added PySide6 main/floating UI shell scaffolding.
-- Added automation control scaffolding.
-- Added credential and permission models.
-- Added monitoring and voice service shells.
-- Added automated tests for routing, memory, and task flow.
+### Not complete / not verified
+- No local execution environment was available during this change; pytest and desktop startup have not been run.
+- Worker cancellation is not yet cooperative at the HTTP request level; UI cancellation is a state marker only.
+- Main-window provider connectivity polling and provider/model settings page are pending.
+- The floating companion is a restore/status surface, not a fully synchronized command widget.
+- Real desktop automation, screen perception, file manager, developer mode, research/citations, voice/wake-word, task persistence/recovery, and approval dialogs remain unimplemented.
+- This project must not claim all original specification phases complete until these features are implemented and tested.
 
-### Outstanding work
-
-- Real service authentication and environment setup
-- Actual App/Window automation integration
-- Full UI binding to live task progress and provider states
-- Real voice recognition and speech synthesis integration
-- Developer mode project analysis and code execution flows
-- Research mode with citation tracking and fact checking
-- Production diagnostic lifecycle and task recovery
-
-### Known issues
-
-- No real provider keys are configured in the repository.
-- External service integrations are intentionally stubbed until runtime configuration is supplied.
-- UI functionality is implemented as a shell foundation and must be extended with real data binding.
-
-### Architectural decisions
-
-- Native Brain remains the sole orchestration authority.
-- Providers do not directly control the application.
-- Shared backend state drives both the main desktop window and floating companion.
-- Memory is provider-independent and persisted locally.
-- Local-first operation is preserved even when cloud access is unavailable.
-
-### Testing status
-
-- Core task lifecycle tests passed at the framework level.
-- Routing tests cover provider selection behavior.
-- Memory tests cover persistence and retrieval.
-- Live cloud-provider validation remains pending runtime credentials and external service access.
+## Security decisions
+- No API keys hardcoded or serialized to plaintext configuration files.
+- Local providers are optional; offline requests never fall through to cloud providers.
+- Launching accepts an explicit existing executable path and uses `shell=False`.
+- Destructive operations and arbitrary command execution are intentionally unavailable.
