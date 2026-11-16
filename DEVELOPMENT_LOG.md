@@ -1,12 +1,12 @@
 # Development log
 
-## Security and audit milestone
+## Execution verification and action gating milestone
 
-- Added an append-only SQLite audit log for task events, security approvals, and automation actions.
-- Kept audit records fully local and separate from provider secrets.
-- Continued Developer Mode sandboxing, research reporting, and approval lifecycle guardrails.
-- Added a focused test for audit log persistence and retrieval.
+- Added a local `ExecutionHistory` ledger to persist task state, provider, outcome, and summary metadata.
+- Added a reusable `ActionGuard` that enforces explicit approval before sensitive operations can be consumed.
+- Added tests for execution history persistence and approval-gated action handling.
+- Continued to keep provider credentials and secrets out of stored config files and local logs.
 
 ## Verification
 
-Tests were authored but not executed in this environment. Run `python -m pytest -q` after installing requirements. Provider checks require network access, configured keys, and/or a running Ollama service. Approval primitives are not yet wired to actual automation execution; dangerous operations remain unavailable by design.
+Tests were authored but not executed in this environment. Run `python -m pytest -q` after installing requirements. Provider checks require network access, configured keys, and/or a running Ollama service. Automation execution remains intentionally gated and not yet wired to real destructive actions.

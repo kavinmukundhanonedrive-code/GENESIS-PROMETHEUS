@@ -22,15 +22,15 @@ Ollama: install Ollama and pull a model (for example `ollama pull llama3.1`). Op
 
 ## Developer workspace
 
-The project includes a safe workspace registry for Developer Mode. It allows projects to be created and file reads/writes to remain within the selected project root while rejecting path traversal attempts. This is a project-local guardrail for source code operations, not a full autonomous code editing system.
+The project includes a safe workspace registry for Developer Mode. It allows projects to be created and file reads/writes to remain within the selected project root while rejecting path traversal attempts.
 
 ## Research mode
 
-The repository includes a structured research-mode layer that keeps verified sources separate from interpretation. Research reports store citations, findings, and a final summary in a traceable format suitable for later review.
+The repository includes a structured research-mode layer that keeps verified sources separate from interpretation. Research reports store citations, findings, and a final summary in traceable format.
 
-## Security and auditing
+## Security, approvals, and execution verification
 
-The application includes an append-only audit log for task states, approvals, and automation events to preserve a verifiable action history. Sensitive operations remain default-deny, and approvals are still task-scoped and expiring.
+This milestone adds a dedicated execution ledger and action guard. Every significant task execution is recorded locally with state, summary, provider, timing, and outcome metadata. Sensitive automation actions now use a permission gate that requires explicit approval before they are marked as consumable. This creates a stronger safety boundary without enabling arbitrary automation yet.
 
 ## Current milestone
 
@@ -43,8 +43,9 @@ The application includes an append-only audit log for task states, approvals, an
 - Developer workspace isolation for project-aware file operations
 - Structured research reporting with citations and fact/interpretation separation
 - Append-only security audit logging
+- Local execution history and permission-gated action enforcement
 - Main command console and shared floating companion state
 
 ## Limitations
 
-This does not complete the entire original roadmap. No end-to-end execution has been run in this tool session. Full Windows UI verification, provider credentials/network testing, hardware monitoring UI, executable approval integration, full desktop controls, file/project developer tools, research with source citations, and voice recognition/synthesis remain future work. Cancellation marks a task cancelled but cannot interrupt an in-flight HTTP request until the provider returns.
+This remains an incremental engineering foundation. Full Windows UI verification, provider credentials/network testing, hardware monitoring UI, real desktop controls, developer workspace editing, research with source collection, voice interaction, and full product polish remain future work.
