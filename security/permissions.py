@@ -11,7 +11,7 @@ class Permission:
 
 
 class PermissionManager:
-    """Default-deny permission registry; automation must request approval."""
+    """Default-deny permission registry."""
     def __init__(self) -> None:
         self.permissions = {
             "desktop_control": Permission("desktop_control", False, True),
@@ -33,3 +33,6 @@ class PermissionManager:
     def revoke(self, name: str) -> None:
         self.permissions.setdefault(name, Permission(name))
         self.permissions[name].enabled = False
+
+    def list_permissions(self) -> list[Permission]:
+        return list(self.permissions.values())
