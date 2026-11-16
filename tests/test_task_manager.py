@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from core.task_manager import TaskManager, TaskState
 
 
